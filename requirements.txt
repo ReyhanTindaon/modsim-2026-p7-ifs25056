@@ -3,3 +3,5 @@ flask-cors==5.0.1
 SQLAlchemy==2.0.40
 python-dotenv==1.1.0
 requests==2.32.3
+streamlit==1.40.2
+streamlit-option-menu==0.4.0

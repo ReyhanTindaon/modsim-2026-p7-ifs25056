@@ -1,0 +1,27 @@
+### Generate deskripsi produk
+POST http://localhost:5000/descriptions/generate
+Content-Type: application/json
+
+{
+  "product_name": "Sepatu Lari Nike Air Zoom",
+  "features": ["Ringan", "Sol karet tebal", "Breathable mesh", "Ukuran 36-44"],
+  "platform": "Tokopedia",
+  "tone": "persuasif"
+}
+
+###
+
+### Ambil semua deskripsi
+GET http://localhost:5000/descriptions
+
+###
+
+### Ambil dengan pagination
+GET http://localhost:5000/descriptions?page=1&per_page=5
+
+###
+
+### Hapus deskripsi berdasarkan ID
+DELETE http://localhost:5000/descriptions/1
+
+###

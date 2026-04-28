@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DescAI — Generator Deskripsi Produk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07080d;
+      --surface: rgba(255,255,255,0.04);
+      --surface-hover: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.08);
+      --border-active: rgba(99,179,237,0.5);
+      --accent: #63b3ed;
+      --accent2: #9f7aea;
+      --accent3: #f6ad55;
+      --text: #e8eaf0;
+      --text-muted: #6b7280;
+      --text-dim: #374151;
+      --success: #68d391;
+      --error: #fc8181;
+      --card-glow: rgba(99,179,237,0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── BACKGROUND MESH ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 10%, rgba(99,179,237,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(159,122,234,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 60% 30%, rgba(246,173,85,0.04) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(7,8,13,0.85);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 0 20px rgba(99,179,237,0.3);
+    }
+
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #fff, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-badge {
+      background: rgba(99,179,237,0.1);
+      border: 1px solid rgba(99,179,237,0.2);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── MAIN ── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(99,179,237,0.08);
+      border: 1px solid rgba(99,179,237,0.15);
+      color: var(--accent);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: border-color 0.3s, box-shadow 0.3s;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .card:hover {
+      border-color: rgba(99,179,237,0.15);
+      box-shadow: 0 0 40px var(--card-glow);
+    }
+
+    .card:nth-child(2) { animation-delay: 0.1s; }
+    .card:nth-child(3) { animation-delay: 0.2s; }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .card-icon.blue { background: rgba(99,179,237,0.12); }
+    .card-icon.purple { background: rgba(159,122,234,0.12); }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+    }
+
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .field { margin-bottom: 20px; }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+
+    input::placeholder, textarea::placeholder { color: var(--text-dim); }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--border-active);
+      background: rgba(99,179,237,0.04);
+      box-shadow: 0 0 0 3px rgba(99,179,237,0.08);
+    }
+
+    select option { background: #1a1f2e; color: var(--text); }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    /* ── GRID ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media(max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* ── TAGS ── */
+    .feature-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .feature-row input { margin: 0; flex: 1; }
+
+    .tags-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 0;
+      transition: min-height 0.3s;
+    }
+
+    .tags-wrapper:not(:empty) { min-height: 36px; }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99,179,237,0.1);
+      border: 1px solid rgba(99,179,237,0.2);
+      color: var(--accent);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      animation: tagIn 0.2s ease both;
+    }
+
+    .tag button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(99,179,237,0.6);
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0;
+      transition: color 0.15s;
+      display: flex;
+      align-items: center;
+    }
+
+    .tag button:hover { color: var(--error); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #4299e1);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(99,179,237,0.25);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 28px rgba(99,179,237,0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-ghost {
+      background: var(--surface-hover);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: rgba(255,255,255,0.15);
+    }
+
+    .btn-danger {
+      background: rgba(252,129,129,0.1);
+      color: var(--error);
+      border: 1px solid rgba(252,129,129,0.2);
+    }
+
+    .btn-danger:hover {
+      background: rgba(252,129,129,0.18);
+      border-color: rgba(252,129,129,0.35);
+    }
+
+    .btn-sm { padding: 7px 14px; font-size: 0.8rem; border-radius: 8px; }
+    .btn-xs { padding: 5px 10px; font-size: 0.75rem; border-radius: 7px; }
+
+    /* ── GENERATE BUTTON FULL WIDTH ── */
+    .btn-generate {
+      width: 100%;
+      padding: 14px 24px;
+      font-size: 1rem;
+      border-radius: 14px;
+      margin-top: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-generate::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.5s;
+    }
+
+    .btn-generate:hover::before { transform: translateX(100%); }
+
+    /* ── STATUS MESSAGES ── */
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      margin-top: 16px;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .status.loading {
+      background: rgba(99,179,237,0.08);
+      border: 1px solid rgba(99,179,237,0.15);
+      color: var(--accent);
+    }
+
+    .status.success {
+      background: rgba(104,211,145,0.08);
+      border: 1px solid rgba(104,211,145,0.15);
+      color: var(--success);
+    }
+
+    .status.error {
+      background: rgba(252,129,129,0.08);
+      border: 1px solid rgba(252,129,129,0.15);
+      color: var(--error);
+    }
+
+    /* ── SPINNER ── */
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(99,179,237,0.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    /* ── RESULT BOX ── */
+    .result-panel {
+      margin-top: 24px;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .result-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    .result-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #c8d0e0;
+      min-height: 80px;
+      position: relative;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+    }
+
+    /* ── TABLE ── */
+    .table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid var(--border); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+
+    th {
+      background: rgba(255,255,255,0.03);
+      text-align: left;
+      padding: 14px 16px;
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      vertical-align: middle;
+      color: #b0b8c8;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .cell-id {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .cell-name { color: var(--text); font-weight: 500; }
+
+    .platform-pill {
+      display: inline-block;
+      padding: 3px 10px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-formal { background: rgba(99,179,237,0.12); color: var(--accent); border: 1px solid rgba(99,179,237,0.2); }
+    .badge-santai { background: rgba(104,211,145,0.12); color: var(--success); border: 1px solid rgba(104,211,145,0.2); }
+    .badge-persuasif { background: rgba(246,173,85,0.12); color: var(--accent3); border: 1px solid rgba(246,173,85,0.2); }
+
+    .content-preview {
+      max-width: 280px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 0.82rem;
+      color: #6b7280;
+    }
+
+    .date-cell { color: var(--text-muted); font-size: 0.8rem; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+    }
+
+    .empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
+    .empty-text { font-size: 0.9rem; }
+
+    /* ── PAGINATION ── */
+    .pagination {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 0 4px;
+    }
+
+    .pagination .page-info {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      padding: 0 8px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 8px 0 20px;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .divider span { color: var(--text-muted); font-size: 0.75rem; }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: flex;
+      gap: 1px;
+      background: var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .stat-box {
+      flex: 1;
+      background: var(--bg);
+      padding: 16px 20px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.6rem;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    @keyframes tagIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+    /* ── TOOLTIP copy ── */
+    .copied-toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .copied-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-logo">
+    <div class="logo-icon">✦</div>
+    <span class="logo-text">DescAI</span>
+  </div>
+  <span class="header-badge">AI-POWERED</span>
+</header>
+
+<!-- MAIN -->
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Generator Aktif</div>
+    <h1>Deskripsi Produk<br><span class="gradient">yang Menjual.</span></h1>
+    <p>Generate deskripsi produk menarik otomatis<br>untuk semua platform marketplace terpopuler.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row" id="stats-row" style="animation: fadeUp 0.6s ease 0.1s both; opacity:0;">
+    <div class="stat-box">
+      <div class="stat-num" id="stat-total">—</div>
+      <div class="stat-label">Total Deskripsi</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="stat-platform">—</div>
+      <div class="stat-label">Platform Aktif</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="stat-today">—</div>
+      <div class="stat-label">Generate Hari Ini</div>
+    </div>
+  </div>
+
+  <!-- GENERATE CARD -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon blue">✨</div>
+      <div>
+        <div class="card-title">Generate Deskripsi Baru</div>
+        <div class="card-subtitle">Isi form berikut untuk membuat deskripsi produk</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Nama Produk</label>
+      <input type="text" id="product_name" placeholder="Contoh: Sepatu Lari Nike Air Zoom" />
+    </div>
+
+    <div class="field">
+      <label>Fitur Utama</label>
+      <div class="feature-row">
+        <input type="text" id="feature_input"
+          placeholder="Tambah fitur, tekan Enter…"
+          onkeydown="if(event.key==='Enter'){addFeature();event.preventDefault();}"/>
+        <button class="btn btn-ghost btn-sm" onclick="addFeature()">+ Tambah</button>
+      </div>
+      <div class="tags-wrapper" id="features_tags"></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label>Platform Target</label>
+        <select id="platform">
+          <option value="">Pilih Platform</option>
+          <option>Tokopedia</option>
+          <option>Shopee</option>
+          <option>Lazada</option>
+          <option>TikTok Shop</option>
+          <option>Bukalapak</option>
+          <option>Lainnya</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Gaya Bahasa</label>
+        <select id="tone">
+          <option value="">Pilih Gaya</option>
+          <option value="formal">🎩 Formal</option>
+          <option value="santai">😎 Santai</option>
+          <option value="persuasif">🔥 Persuasif</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-generate" onclick="generate()" id="gen_btn">
+      <span>🚀</span> Generate Deskripsi
+    </button>
+
+    <div id="gen_msg"></div>
+
+    <!-- RESULT -->
+    <div id="result_section" style="display:none;">
+      <div class="result-panel">
+        <div class="result-header">
+          <div class="result-title">📝 Hasil Deskripsi</div>
+          <button class="btn btn-ghost btn-sm" onclick="copyResult()">📋 Salin</button>
+        </div>
+        <div class="result-box" id="result_content"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIST CARD -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon purple">📋</div>
+      <div style="flex:1">
+        <div class="card-title">Semua Deskripsi Tersimpan</div>
+        <div class="card-subtitle">Riwayat seluruh deskripsi yang telah dibuat</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="loadList(currentPage)">↻ Refresh</button>
+    </div>
+
+    <div id="list_msg"></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Produk</th>
+            <th>Platform</th>
+            <th>Gaya</th>
+            <th>Preview</th>
+            <th>Tanggal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="table_body">
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">
+                <div class="spinner" style="margin: 0 auto 12px;"></div>
+                <div class="empty-text">Memuat data…</div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+</main>
+
+<!-- COPY TOAST -->
+<div class="copied-toast" id="toast">✓ Disalin ke clipboard!</div>
+
+<script>
+  let features = [];
+  let currentPage = 1;
+
+  // ── FEATURES ──
+  function addFeature() {
+    const inp = document.getElementById('feature_input');
+    const val = inp.value.trim();
+    if (!val || features.includes(val)) { inp.value = ''; return; }
+    features.push(val);
+    renderTags();
+    inp.value = '';
+    inp.focus();
+  }
+
+  function removeFeature(i) {
+    features.splice(i, 1);
+    renderTags();
+  }
+
+  function renderTags() {
+    const row = document.getElementById('features_tags');
+    row.innerHTML = features.map((f, i) =>
+      `<span class="tag">${f}
+        <button onclick="removeFeature(${i})" title="Hapus">×</button>
+      </span>`
+    ).join('');
+  }
+
+  // ── STATUS ──
+  function setMsg(el, type, icon, text) {
+    el.innerHTML = type
+      ? `<div class="status ${type}">
+          ${type === 'loading' ? '<div class="spinner"></div>' : `<span>${icon}</span>`}
+          <span>${text}</span>
+        </div>`
+      : '';
+  }
+
+  // ── GENERATE ──
+  async function generate() {
+    const product_name = document.getElementById('product_name').value.trim();
+    const platform = document.getElementById('platform').value;
+    const tone = document.getElementById('tone').value;
+    const msg = document.getElementById('gen_msg');
+    const btn = document.getElementById('gen_btn');
+    const resultSection = document.getElementById('result_section');
+
+    if (!product_name) return setMsg(msg, 'error', '⚠', 'Nama produk wajib diisi.');
+    if (!features.length) return setMsg(msg, 'error', '⚠', 'Tambahkan minimal 1 fitur produk.');
+    if (!platform) return setMsg(msg, 'error', '⚠', 'Pilih platform terlebih dahulu.');
+    if (!tone) return setMsg(msg, 'error', '⚠', 'Pilih gaya bahasa terlebih dahulu.');
+
+    setMsg(msg, 'loading', '', 'Sedang generate deskripsi, harap tunggu…');
+    resultSection.style.display = 'none';
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Generating…';
+
+    try {
+      const res = await fetch('/descriptions/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_name, features, platform, tone })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMsg(msg, 'error', '✗', data.error || 'Terjadi kesalahan.');
+        return;
+      }
+
+      setMsg(msg, 'success', '✓', 'Deskripsi berhasil dibuat dan disimpan!');
+      document.getElementById('result_content').textContent = data.content;
+      resultSection.style.display = 'block';
+      loadList(1);
+      updateStats();
+    } catch (e) {
+      setMsg(msg, 'error', '✗', e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span>🚀</span> Generate Deskripsi';
+    }
+  }
+
+  // ── LOAD LIST ──
+  async function loadList(page = 1) {
+    currentPage = page;
+    const body = document.getElementById('table_body');
+    const pag = document.getElementById('pagination');
+
+    body.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="spinner" style="margin:0 auto 12px;"></div><div class="empty-text">Memuat data…</div></div></td></tr>`;
+    pag.innerHTML = '';
+
+    try {
+      const res = await fetch(`/descriptions?page=${page}&per_page=10`);
+      const data = await res.json();
+
+      if (!res.ok || !data.data?.length) {
+        body.innerHTML = `<tr><td colspan="7">
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <div class="empty-text">Belum ada deskripsi tersimpan.<br>Generate deskripsi pertama kamu!</div>
+          </div>
+        </td></tr>`;
+        return;
+      }
+
+      body.innerHTML = data.data.map(d => `
+        <tr>
+          <td class="cell-id">${d.id}</td>
+          <td class="cell-name">${esc(d.product_name || '—')}</td>
+          <td><span class="platform-pill">${esc(d.platform || '—')}</span></td>
+          <td><span class="badge badge-${d.tone}">${toneLabel(d.tone)}</span></td>
+          <td><div class="content-preview" title="${esc(d.content)}">${esc(d.content)}</div></td>
+          <td class="date-cell">${fmtDate(d.created_at)}</td>
+          <td>
+            <button class="btn btn-danger btn-xs" onclick="deleteDesc(${d.id})">Hapus</button>
+          </td>
+        </tr>
+      `).join('');
+
+      if (data.total_pages > 1) {
+        let html = '';
+        if (data.page > 1) html += `<button class="btn btn-ghost btn-sm" onclick="loadList(${data.page - 1})">← Prev</button>`;
+        html += `<span class="page-info">${data.page} / ${data.total_pages}</span>`;
+        if (data.page < data.total_pages) html += `<button class="btn btn-ghost btn-sm" onclick="loadList(${data.page + 1})">Next →</button>`;
+        pag.innerHTML = html;
+      }
+    } catch (e) {
+      body.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--error);padding:20px;">${e.message}</td></tr>`;
+    }
+  }
+
+  // ── DELETE ──
+  async function deleteDesc(id) {
+    if (!confirm(`Hapus deskripsi #${id}?`)) return;
+    try {
+      const res = await fetch(`/descriptions/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) { alert(data.error); return; }
+      loadList(currentPage);
+      updateStats();
+    } catch (e) { alert(e.message); }
+  }
+
+  // ── COPY ──
+  function copyResult() {
+    const text = document.getElementById('result_content').textContent;
+    navigator.clipboard.writeText(text).then(showToast);
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // ── STATS ──
+  async function updateStats() {
+    try {
+      const res = await fetch('/descriptions?page=1&per_page=1');
+      const data = await res.json();
+      const total = data.total || 0;
+
+      document.getElementById('stat-total').textContent = total;
+
+      // crude platform / today count from first page
+      const res2 = await fetch('/descriptions?page=1&per_page=100');
+      const data2 = await res2.json();
+      const items = data2.data || [];
+
+      const platforms = new Set(items.map(d => d.platform).filter(Boolean));
+      document.getElementById('stat-platform').textContent = platforms.size || '—';
+
+      const today = new Date().toLocaleDateString('id-ID');
+      const todayCount = items.filter(d => new Date(d.created_at).toLocaleDateString('id-ID') === today).length;
+      document.getElementById('stat-today').textContent = todayCount;
+
+      document.getElementById('stats-row').style.opacity = '1';
+    } catch {}
+  }
+
+  // ── HELPERS ──
+  function esc(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function fmtDate(str) {
+    if (!str) return '—';
+    const d = new Date(str);
+    return d.toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
+  }
+
+  function toneLabel(t) {
+    return { formal:'🎩 Formal', santai:'😎 Santai', persuasif:'🔥 Persuasif' }[t] || t;
+  }
+
+  // ── INIT ──
+  loadList();
+  updateStats();
+</script>
+</body>
+</html>
